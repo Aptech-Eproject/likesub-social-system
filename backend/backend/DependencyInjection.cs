@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using backend.Data;
+using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
 namespace backend
@@ -25,7 +26,7 @@ namespace backend
             // Connect String DB
             var connectStringDB = configuration.GetConnectionString("ConnectDB");
             var serverVersion = ServerVersion.AutoDetect(connectStringDB);
-            //services.AddDbContext<AppDbContext>(options => options.UseMySql(connectStringDB, serverVersion));
+            services.AddDbContext<AppDbContext>(options => options.UseMySql(connectStringDB, serverVersion));
 
             // Connect String Redis
             var connectStringRedis = configuration.GetConnectionString("Redis");
