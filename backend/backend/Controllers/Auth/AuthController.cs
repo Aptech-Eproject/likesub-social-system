@@ -28,5 +28,19 @@ namespace backend.Controllers.Auth
             var response = await _authService.LoginAsync(request);
             return Ok(response);
         }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto request)
+        {
+            var message = await _authService.ForgotPasswordAsync(request);
+            return Ok(new { message });
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto request)
+        {
+            var message = await _authService.ResetPasswordAsync(request);
+            return Ok(new { message });
+        }
     }
 }
