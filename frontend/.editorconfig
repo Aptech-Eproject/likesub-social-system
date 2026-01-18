@@ -1,0 +1,3 @@
+[*] # áp dụng cho tất cả cả máy khi clone dự án này về
+indent_size = 4
+indent_style = space
