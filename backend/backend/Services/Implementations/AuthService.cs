@@ -15,19 +15,22 @@ namespace backend.Services.Implementations
         private readonly IRedisService _redisService;
         private readonly IRefreshToken _refreshTokenRepository;
         private readonly IConfiguration _configuration;
+        private readonly ILoginAttemptService _loginAttemptService;
 
         public AuthService(
             IUser userRepository, 
             JwtTokenGenerator jwtTokenGenerator, 
             IRedisService redisService,
             IRefreshToken refreshTokenRepository,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ILoginAttemptService loginAttemptService)
         {
             _userRepository = userRepository;
             _jwtTokenGenerator = jwtTokenGenerator;
             _redisService = redisService;
             _refreshTokenRepository = refreshTokenRepository;
             _configuration = configuration;
+            _loginAttemptService = loginAttemptService;
         }
 
         public async Task<RegisterResponse> RegisterAsync(UserRegisterDto request)
@@ -81,17 +84,38 @@ namespace backend.Services.Implementations
 
         public async Task<LoginResponse> LoginAsync(UserLogin request)
         {
+            // Check if account is locked
+            var isLocked = await _loginAttemptService.IsAccountLockedAsync(request.EmailOrUsername);
+            if (isLocked)
+            {
+                var remainingTime = await _loginAttemptService.GetLockoutTimeRemainingAsync(request.EmailOrUsername);
+                throw new BadHttpRequestException($"Account is locked due to too many failed login attempts. Please try again after {remainingTime?.TotalMinutes:F0} minutes.");
+            }
+
             var user = await _userRepository.GetByEmailOrUsernameAsync(request.EmailOrUsername);
 
             if (user == null)
             {
-                throw new BadHttpRequestException("Invalid email/username or password");
+                await _loginAttemptService.RecordFailedAttemptAsync(request.EmailOrUsername);
+                var attemptsLeft = 5 - await _loginAttemptService.GetFailedAttemptsCountAsync(request.EmailOrUsername);
+                throw new BadHttpRequestException($"Invalid email/username or password. {attemptsLeft} attempts remaining.");
             }
 
             if (!PasswordHasher.VerifyPassword(request.Password, user.Password))
             {
-                throw new BadHttpRequestException("Invalid email/username or password");
+                await _loginAttemptService.RecordFailedAttemptAsync(request.EmailOrUsername);
+                var attemptsLeft = 5 - await _loginAttemptService.GetFailedAttemptsCountAsync(request.EmailOrUsername);
+                
+                if (attemptsLeft <= 0)
+                {
+                    throw new BadHttpRequestException("Account locked due to too many failed login attempts. Please try again after 15 minutes.");
+                }
+                
+                throw new BadHttpRequestException($"Invalid email/username or password. {attemptsLeft} attempts remaining.");
             }
+
+            // Reset failed attempts on successful login
+            await _loginAttemptService.ResetFailedAttemptsAsync(request.EmailOrUsername);
 
             var token = _jwtTokenGenerator.GenerateToken(user);
             var refreshToken = await GenerateRefreshTokenAsync(user.Id);

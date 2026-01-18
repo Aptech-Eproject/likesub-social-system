@@ -19,6 +19,7 @@ namespace backend
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddSingleton<IRedisService, RedisService>();
+            services.AddSingleton<ILoginAttemptService, LoginAttemptService>();
             
             // Helpers
             services.AddScoped<JwtTokenGenerator>();
