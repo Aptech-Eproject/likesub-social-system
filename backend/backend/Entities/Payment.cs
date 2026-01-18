@@ -9,7 +9,7 @@
         public required decimal AmountPaid { get; set; }
         public required decimal AmountReceived { get; set; }
         public required PaymentStatus Status { get; set; } = PaymentStatus.Pending;
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; }
     }
 
