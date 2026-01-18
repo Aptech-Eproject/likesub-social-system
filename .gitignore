@@ -1,0 +1,39 @@
+# ========================
+# Environment / Secrets
+# ========================
+appsettings.*.json
+!appsettings.example.json
+
+.env
+# ========================
+# OS / IDE
+# ========================
+.DS_Store
+Thumbs.db
+.vs/
+.vscode/
+
+# ========================
+# .NET build artifacts
+# ========================
+**/bin/
+**/obj/
+*.user
+*.suo
+*.nuget.*
+project.assets.json
+project.nuget.cache
+
+# ========================
+# NodeJS 
+# ========================
+**/node_modules/
+**/.next/
+# ========================
+# Logs
+# ========================
+*.log
+#=========================
+# package-lock root repo
+#=========================
+/package-lock.json
