@@ -5,5 +5,7 @@ namespace backend.Repositories.Interfaces
 {
     public interface IPayment : IGenericRepository<Payment>
     {
+        Task<List<Payment>> GetPaymentsByUserIdAsync(string userId);
+        Task<Payment?> GetByTxnCodeAsync(string txnCode);
     }
 }

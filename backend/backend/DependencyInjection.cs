@@ -47,6 +47,7 @@ namespace backend
             // Repository
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUser, UserRepository>();
+            services.AddScoped<IPayment, PaymentRepository>();
 
             return services;
         }
