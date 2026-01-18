@@ -13,12 +13,21 @@ namespace backend.Services.Implementations
         private readonly IUser _userRepository;
         private readonly JwtTokenGenerator _jwtTokenGenerator;
         private readonly IRedisService _redisService;
+        private readonly IRefreshToken _refreshTokenRepository;
+        private readonly IConfiguration _configuration;
 
-        public AuthService(IUser userRepository, JwtTokenGenerator jwtTokenGenerator, IRedisService redisService)
+        public AuthService(
+            IUser userRepository, 
+            JwtTokenGenerator jwtTokenGenerator, 
+            IRedisService redisService,
+            IRefreshToken refreshTokenRepository,
+            IConfiguration configuration)
         {
             _userRepository = userRepository;
             _jwtTokenGenerator = jwtTokenGenerator;
             _redisService = redisService;
+            _refreshTokenRepository = refreshTokenRepository;
+            _configuration = configuration;
         }
 
         public async Task<RegisterResponse> RegisterAsync(UserRegisterDto request)
@@ -85,10 +94,17 @@ namespace backend.Services.Implementations
             }
 
             var token = _jwtTokenGenerator.GenerateToken(user);
+            var refreshToken = await GenerateRefreshTokenAsync(user.Id);
+
+            // Store access token in Redis with expiry
+            var jwtSettings = _configuration.GetSection("Jwt");
+            var accessTokenExpiry = TimeSpan.FromHours(Convert.ToDouble(jwtSettings["ExpiresInHours"]));
+            await _redisService.SetAsync($"access_token:{user.Id}", token, accessTokenExpiry);
 
             return new LoginResponse
             {
                 Token = token,
+                RefreshToken = refreshToken,
                 User = new UserInfo
                 {
                     Id = user.Id,
@@ -158,6 +174,70 @@ namespace backend.Services.Implementations
             await _redisService.DeleteAsync(redisKey);
 
             return "Password reset successfully";
+        }
+
+        public async Task<LoginResponse> RefreshTokenAsync(string refreshToken)
+        {
+            var storedToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+
+            if (storedToken == null || !storedToken.IsActive)
+            {
+                throw new BadHttpRequestException("Invalid or expired refresh token");
+            }
+
+            var user = await _userRepository.GetByIdAsync(int.Parse(storedToken.UserId));
+            if (user == null)
+            {
+                throw new BadHttpRequestException("User not found");
+            }
+
+            // Generate new tokens
+            var newAccessToken = _jwtTokenGenerator.GenerateToken(user);
+            var newRefreshToken = await GenerateRefreshTokenAsync(user.Id);
+
+            // Revoke old refresh token
+            await _refreshTokenRepository.RevokeTokenAsync(refreshToken, newRefreshToken);
+
+            // Store new access token in Redis
+            var jwtSettings = _configuration.GetSection("Jwt");
+            var accessTokenExpiry = TimeSpan.FromHours(Convert.ToDouble(jwtSettings["ExpiresInHours"]));
+            await _redisService.SetAsync($"access_token:{user.Id}", newAccessToken, accessTokenExpiry);
+
+            return new LoginResponse
+            {
+                Token = newAccessToken,
+                RefreshToken = newRefreshToken,
+                User = new UserInfo
+                {
+                    Id = user.Id,
+                    Username = user.Username,
+                    Email = user.Email,
+                    FullName = user.FullName,
+                    Phone = user.Phone,
+                    Money = user.Money,
+                    TotalMoney = user.TotalMoney,
+                    Role = user.Role
+                }
+            };
+        }
+
+        public async Task RevokeTokenAsync(string refreshToken)
+        {
+            await _refreshTokenRepository.RevokeTokenAsync(refreshToken);
+        }
+
+        private async Task<string> GenerateRefreshTokenAsync(string userId)
+        {
+            var refreshToken = new RefreshToken
+            {
+                UserId = userId,
+                Token = Convert.ToBase64String(Guid.NewGuid().ToByteArray()) + Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
+                CreatedAt = DateTime.UtcNow,
+                ExpiresAt = DateTime.UtcNow.AddDays(7) // 7 days expiry
+            };
+
+            await _refreshTokenRepository.AddAsync(refreshToken);
+            return refreshToken.Token;
         }
     }
 }

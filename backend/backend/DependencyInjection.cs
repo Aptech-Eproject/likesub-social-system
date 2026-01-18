@@ -50,6 +50,7 @@ namespace backend
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUser, UserRepository>();
             services.AddScoped<IPayment, PaymentRepository>();
+            services.AddScoped<IRefreshToken, RefreshTokenRepository>();
 
             return services;
         }

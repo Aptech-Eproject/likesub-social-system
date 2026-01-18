@@ -14,6 +14,7 @@ namespace backend.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -23,6 +24,7 @@ namespace backend.Data
             // Apply entity configurations
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new PaymentConfiguration());
+            modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
 
             // Chuyển thành chữ thường
             foreach (var entity in modelBuilder.Model.GetEntityTypes())

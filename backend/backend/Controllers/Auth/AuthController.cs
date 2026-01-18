@@ -42,5 +42,19 @@ namespace backend.Controllers.Auth
             var message = await _authService.ResetPasswordAsync(request);
             return Ok(new { message });
         }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+        {
+            var response = await _authService.RefreshTokenAsync(request.RefreshToken);
+            return Ok(response);
+        }
+
+        [HttpPost("revoke-token")]
+        public async Task<IActionResult> RevokeToken([FromBody] RefreshTokenRequest request)
+        {
+            await _authService.RevokeTokenAsync(request.RefreshToken);
+            return Ok(new { message = "Token revoked successfully" });
+        }
     }
 }

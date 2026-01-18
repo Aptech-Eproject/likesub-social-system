@@ -8,5 +8,7 @@ namespace backend.Services.Interfaces
         Task<LoginResponse> LoginAsync(UserLogin request);
         Task<string> ForgotPasswordAsync(ForgotPasswordDto request);
         Task<string> ResetPasswordAsync(ResetPasswordDto request);
+        Task<LoginResponse> RefreshTokenAsync(string refreshToken);
+        Task RevokeTokenAsync(string refreshToken);
     }
 }
