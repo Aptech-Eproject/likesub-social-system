@@ -41,6 +41,11 @@ namespace backend.Data.Configurations
                 .HasMaxLength(255)
                 .IsRequired();
 
+            builder.Property(u => u.Role)
+              .HasConversion<string>()
+              .HasDefaultValue(RoleType.USER)
+              .IsRequired();
+
             builder.Property(u => u.Money)
                 .HasColumnType("decimal(15,2)")
                 .HasDefaultValue(0.00m);

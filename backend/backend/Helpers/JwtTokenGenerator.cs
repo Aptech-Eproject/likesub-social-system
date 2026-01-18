@@ -24,8 +24,11 @@ namespace backend.Helpers
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim("userId", user.Id),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim("username", user.Username),
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new Claim("role", user.Role.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
