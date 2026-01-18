@@ -12,7 +12,7 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260118204127_likesubdb")]
+    [Migration("20260118211117_likesubdb")]
     partial class likesubdb
     {
         /// <inheritdoc />
@@ -35,41 +35,60 @@ namespace backend.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal>("AmountPaid")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(15,2)")
                         .HasColumnName("amount_paid");
 
                     b.Property<decimal>("AmountReceived")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(15,2)")
                         .HasColumnName("amount_received");
 
                     b.Property<string>("BankName")
-                        .HasColumnType("longtext")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
                         .HasColumnName("bank_name");
 
                     b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int")
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("longtext")
+                        .HasDefaultValue("Pending")
                         .HasColumnName("status");
 
                     b.Property<string>("TxnCode")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
                         .HasColumnName("txn_code");
 
                     b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime(6)")
-                        .HasColumnName("updated_at");
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedAt"));
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasMaxLength(36)
+                        .HasColumnType("varchar(36)")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
                         .HasName("p_k_payments");
+
+                    b.HasIndex("TxnCode")
+                        .IsUnique()
+                        .HasDatabaseName("i_x_payments_txn_code");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("i_x_payments_user_id");
 
                     b.ToTable("payments");
                 });
@@ -77,50 +96,74 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Entities.User", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(255)")
+                        .HasMaxLength(36)
+                        .HasColumnType("varchar(36)")
                         .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
                         .HasColumnName("email");
 
                     b.Property<string>("FullName")
-                        .HasColumnType("longtext")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
                         .HasColumnName("full_name");
 
                     b.Property<decimal>("Money")
-                        .HasColumnType("decimal(65,30)")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(15,2)")
+                        .HasDefaultValue(0.00m)
                         .HasColumnName("money");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
                         .HasColumnName("password");
 
                     b.Property<string>("Phone")
-                        .HasColumnType("longtext")
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
                         .HasColumnName("phone");
 
-                    b.Property<string>("TokenGoogle2FA")
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("longtext")
+                        .HasDefaultValue("USER")
+                        .HasColumnName("role");
+
+                    b.Property<string>("TokenGoogle2FA")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
                         .HasColumnName("token_google2_f_a");
 
                     b.Property<decimal>("TotalMoney")
-                        .HasColumnType("decimal(65,30)")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(15,2)")
+                        .HasDefaultValue(0.00m)
                         .HasColumnName("total_money");
 
                     b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime(6)")
-                        .HasColumnName("updated_at");
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedAt"));
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
                         .HasColumnName("username");
 
                     b.Property<DateTime?>("VerifyEmailAt")
@@ -130,7 +173,28 @@ namespace backend.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_users");
 
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("i_x_users_email");
+
+                    b.HasIndex("Phone")
+                        .IsUnique()
+                        .HasDatabaseName("i_x_users_phone");
+
+                    b.HasIndex("Username")
+                        .IsUnique()
+                        .HasDatabaseName("i_x_users_username");
+
                     b.ToTable("users");
+                });
+
+            modelBuilder.Entity("backend.Entities.Payment", b =>
+                {
+                    b.HasOne("backend.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

@@ -1,6 +1,7 @@
 ﻿
+
+using backend.Data.Configurations;
 using backend.Entities;
-using backend.Utils;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
@@ -19,27 +20,31 @@ namespace backend.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Apply entity configurations
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new PaymentConfiguration());
+
             // Chuyển thành chữ thường
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
                 // table name
-                entity.SetTableName(Helpers.ConvertSnakeCase(entity.GetTableName()!));
+                entity.SetTableName(Helpers.Helpers.ConvertSnakeCase(entity.GetTableName()!));
 
                 // column name
                 foreach (var property in entity.GetProperties())
                 {
-                    property.SetColumnName(Helpers.ConvertSnakeCase(property.GetColumnName()));
+                    property.SetColumnName(Helpers.Helpers.ConvertSnakeCase(property.GetColumnName()));
                 }
 
                 // FK, Index, Key
                 foreach (var key in entity.GetKeys())
                 {
-                    key.SetName(Helpers.ConvertSnakeCase(key.GetName()!));
+                    key.SetName(Helpers.Helpers.ConvertSnakeCase(key.GetName()!));
                 }
 
                 foreach (var index in entity.GetIndexes())
                 {
-                    index.SetDatabaseName(Helpers.ConvertSnakeCase(index.GetDatabaseName()!));
+                    index.SetDatabaseName(Helpers.Helpers.ConvertSnakeCase(index.GetDatabaseName()!));
                 }
 
             }

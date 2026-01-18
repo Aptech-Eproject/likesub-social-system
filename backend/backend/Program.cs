@@ -1,4 +1,5 @@
 ﻿using backend;
+using backend.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -57,6 +58,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 
 var app = builder.Build();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<JwtMiddleware>();
 
 app.UseAuthentication();
 // Configure the HTTP request pipeline.
