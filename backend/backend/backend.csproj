@@ -24,8 +24,5 @@
 		<PackageReference Include="StackExchange.Redis" Version="2.10.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Services\" />
-	</ItemGroup>
 
 </Project>

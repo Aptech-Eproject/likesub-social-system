@@ -1,6 +1,9 @@
-﻿namespace backend.Repositories.Interfaces
+﻿using backend.Entities;
+using static backend.Repositories.Interfaces.IGenericRepository;
+
+namespace backend.Repositories.Interfaces
 {
-    public interface IPayment: 
+    public interface IPayment : IGenericRepository<Payment>
     {
     }
 }

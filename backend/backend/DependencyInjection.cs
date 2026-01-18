@@ -1,6 +1,12 @@
 ﻿using backend.Data;
+using backend.Helpers;
+using backend.Repositories.Implementations;
+using backend.Repositories.Interfaces;
+using backend.Services.Implementations;
+using backend.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
+using static backend.Repositories.Interfaces.IGenericRepository;
 
 namespace backend
 {
@@ -9,12 +15,12 @@ namespace backend
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
+            // Services
+            services.AddScoped<IAuthService, AuthService>();
+            
+            // Helpers
+            services.AddScoped<JwtTokenGenerator>();
 
-            //services.AddScoped<IProductService, ProductService>();
-            //services.AddScoped<ICategoryService, CategoryService>();
-            //services.AddScoped<IOrderService, OrderService>();
-            //services.AddScoped<IAuthService, AuthService>();
-            //services.AddScoped<JwtTokenGenerator>();
             return services;
         }
 
@@ -38,13 +44,9 @@ namespace backend
             // Chỉ cần cài 1 cái thôi bất kỳ: CreateCategoryValidator (là nó sẽ tự hiểu hết), miễn kế thừa đúng cái AbstractionValidator là ok
             //services.AddValidatorsFromAssemblyContaining<CreateCategoryValidator>();
 
-
             // Repository
-            //services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            //services.AddScoped<ICategoryRepository, CategoryRepository>();
-            //services.AddScoped<IProductRepository, ProductRepository>();
-            //services.AddScoped<IOrderRepository, OrderRepository>();
-            //services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IUser, UserRepository>();
 
             return services;
         }

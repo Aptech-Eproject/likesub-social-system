@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace backend.Utils
+namespace backend.Helpers
 {
     public static class Helpers
     {
