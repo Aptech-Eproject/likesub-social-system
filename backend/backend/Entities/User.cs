@@ -14,7 +14,7 @@
         public decimal TotalMoney { get; set; } = 0.00m;
         public string? TokenGoogle2FA { get; set; }
         public DateTime? VerifyEmailAt { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; }
     }
 

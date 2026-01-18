@@ -22,9 +22,9 @@ namespace backend.Data
             base.OnModelCreating(modelBuilder);
 
             // Apply entity configurations
-            modelBuilder.ApplyConfiguration(new UserConfiguration());
-            modelBuilder.ApplyConfiguration(new PaymentConfiguration());
-            modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
+            //modelBuilder.ApplyConfiguration(new UserConfiguration());
+            //modelBuilder.ApplyConfiguration(new PaymentConfiguration());
+            //modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
 
             // Chuyển thành chữ thường
             foreach (var entity in modelBuilder.Model.GetEntityTypes())

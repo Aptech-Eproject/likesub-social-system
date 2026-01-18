@@ -8,31 +8,31 @@ namespace backend.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
+            builder.ToTable("users"); // Đảm bảo tên bảng đồng nhất
+
             builder.HasKey(u => u.Id);
 
             builder.Property(u => u.Id)
                 .HasMaxLength(36)
+                .IsFixedLength() // UUID nên dùng CHAR(36) để tối ưu hiệu suất MySQL
                 .IsRequired();
 
             builder.Property(u => u.Username)
                 .HasMaxLength(50)
                 .IsRequired();
 
-            builder.HasIndex(u => u.Username)
-                .IsUnique();
+            builder.HasIndex(u => u.Username).IsUnique();
 
             builder.Property(u => u.Email)
                 .HasMaxLength(100)
                 .IsRequired();
 
-            builder.HasIndex(u => u.Email)
-                .IsUnique();
+            builder.HasIndex(u => u.Email).IsUnique();
 
             builder.Property(u => u.Phone)
                 .HasMaxLength(20);
 
-            builder.HasIndex(u => u.Phone)
-                .IsUnique();
+            builder.HasIndex(u => u.Phone).IsUnique();
 
             builder.Property(u => u.FullName)
                 .HasMaxLength(100);
@@ -41,10 +41,12 @@ namespace backend.Data.Configurations
                 .HasMaxLength(255)
                 .IsRequired();
 
+            // Sửa lỗi Sentinel cho Role
             builder.Property(u => u.Role)
-              .HasConversion<string>()
-              .HasDefaultValue(RoleType.USER)
-              .IsRequired();
+                .HasConversion<string>()
+                .HasMaxLength(20)
+                .HasDefaultValue(RoleType.USER)
+                .HasSentinel(RoleType.USER);
 
             builder.Property(u => u.Money)
                 .HasColumnType("decimal(15,2)")
@@ -57,13 +59,16 @@ namespace backend.Data.Configurations
             builder.Property(u => u.TokenGoogle2FA)
                 .HasMaxLength(255);
 
-            builder.Property(u => u.VerifyEmailAt);
+            builder.Property(u => u.VerifyEmailAt)
+                .HasColumnType("datetime(6)");
 
             builder.Property(u => u.CreatedAt)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                .HasColumnType("datetime(6)")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
 
             builder.Property(u => u.UpdatedAt)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("datetime(6)")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)")
                 .ValueGeneratedOnAddOrUpdate();
         }
     }

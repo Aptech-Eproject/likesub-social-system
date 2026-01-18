@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers.Payment
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/payment/")]
     [Authorize]
     public class PaymentController : BaseApiController
     {

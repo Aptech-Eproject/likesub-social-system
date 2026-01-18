@@ -32,135 +32,141 @@ namespace backend.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<decimal>("AmountPaid")
-                        .HasColumnType("decimal(15,2)")
+                        .HasColumnType("decimal(65,30)")
                         .HasColumnName("amount_paid");
 
                     b.Property<decimal>("AmountReceived")
-                        .HasColumnType("decimal(15,2)")
+                        .HasColumnType("decimal(65,30)")
                         .HasColumnName("amount_received");
 
                     b.Property<string>("BankName")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
+                        .HasColumnType("longtext")
                         .HasColumnName("bank_name");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnName("created_at");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("longtext")
-                        .HasDefaultValue("Pending")
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
                         .HasColumnName("status");
 
                     b.Property<string>("TxnCode")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
+                        .HasColumnType("longtext")
                         .HasColumnName("txn_code");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime(6)")
-                        .HasColumnName("updated_at")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedAt"));
+                        .HasColumnName("updated_at");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasMaxLength(36)
-                        .HasColumnType("varchar(36)")
+                        .HasColumnType("longtext")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
                         .HasName("p_k_payments");
 
-                    b.HasIndex("TxnCode")
-                        .IsUnique()
-                        .HasDatabaseName("i_x_payments_txn_code");
-
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("i_x_payments_user_id");
-
                     b.ToTable("payments");
+                });
+
+            modelBuilder.Entity("backend.Entities.RefreshToken", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("expires_at");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_revoked");
+
+                    b.Property<string>("ReplacedByToken")
+                        .HasColumnType("longtext")
+                        .HasColumnName("replaced_by_token");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("revoked_at");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("token");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_refresh_tokens");
+
+                    b.ToTable("refresh_tokens");
                 });
 
             modelBuilder.Entity("backend.Entities.User", b =>
                 {
                     b.Property<string>("Id")
-                        .HasMaxLength(36)
-                        .HasColumnType("varchar(36)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
+                        .HasColumnType("longtext")
                         .HasColumnName("email");
 
                     b.Property<string>("FullName")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
+                        .HasColumnType("longtext")
                         .HasColumnName("full_name");
 
                     b.Property<decimal>("Money")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(15,2)")
-                        .HasDefaultValue(0.00m)
+                        .HasColumnType("decimal(65,30)")
                         .HasColumnName("money");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
+                        .HasColumnType("longtext")
                         .HasColumnName("password");
 
                     b.Property<string>("Phone")
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)")
+                        .HasColumnType("longtext")
                         .HasColumnName("phone");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("longtext")
-                        .HasDefaultValue("USER")
+                    b.Property<int>("Role")
+                        .HasColumnType("int")
                         .HasColumnName("role");
 
                     b.Property<string>("TokenGoogle2FA")
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
+                        .HasColumnType("longtext")
                         .HasColumnName("token_google2_f_a");
 
                     b.Property<decimal>("TotalMoney")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(15,2)")
-                        .HasDefaultValue(0.00m)
+                        .HasColumnType("decimal(65,30)")
                         .HasColumnName("total_money");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime(6)")
-                        .HasColumnName("updated_at")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedAt"));
+                        .HasColumnName("updated_at");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)")
+                        .HasColumnType("longtext")
                         .HasColumnName("username");
 
                     b.Property<DateTime?>("VerifyEmailAt")
@@ -170,28 +176,7 @@ namespace backend.Migrations
                     b.HasKey("Id")
                         .HasName("p_k_users");
 
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasDatabaseName("i_x_users_email");
-
-                    b.HasIndex("Phone")
-                        .IsUnique()
-                        .HasDatabaseName("i_x_users_phone");
-
-                    b.HasIndex("Username")
-                        .IsUnique()
-                        .HasDatabaseName("i_x_users_username");
-
                     b.ToTable("users");
-                });
-
-            modelBuilder.Entity("backend.Entities.Payment", b =>
-                {
-                    b.HasOne("backend.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
