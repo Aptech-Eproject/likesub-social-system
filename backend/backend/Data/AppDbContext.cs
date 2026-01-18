@@ -1,5 +1,6 @@
 ﻿
 using backend.Entities;
+using backend.Utils;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 

@@ -1,4 +1,11 @@
-﻿namespace backend.Utils
+﻿using backend.DTOs.Auth;
+using backend.Entities;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+
+namespace backend.Utils
 {
     public class JwtTokenGenerator
     {
