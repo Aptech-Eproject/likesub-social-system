@@ -3,7 +3,7 @@ import CookieStorage from "@/lib/cookie-storage";
 import { AUTH_ENDPOINTS } from "@/constants/api/auth.endpoints";
 import { privateApi, publicApi } from "@/lib/axios-instance";
 import { LoginPayload, LoginResponse } from "@/types/login.type";
-import { RegisterPayload } from "@/types/register.type";
+import { RegisterPayload, RegisterResponse } from "@/types/register.type";
 import { RefreshTokenResponse } from "@/types/refreshToken.type";
 
 const AuthApi = {
@@ -13,28 +13,22 @@ const AuthApi = {
             payload
         );
 
-        CookieStorage.setItem('access_token', response.data.access_token, {
+        CookieStorage.setItem('access_token', response.data.token, {
             expires: 1,
         });
-        CookieStorage.setItem('refresh_token', response.data.refresh_token, {
+
+        CookieStorage.setItem('refresh_token', response.data.refreshToken, {
             expires: 7,
         });
 
         return response.data;
     },
 
-    register: async (payload: RegisterPayload): Promise<LoginResponse> => {
-        const response = await publicApi.post<LoginResponse>(
+    register: async (payload: RegisterPayload): Promise<RegisterResponse> => {
+        const response = await publicApi.post<RegisterResponse>(
             AUTH_ENDPOINTS.REGISTER,
             payload
         );
-
-        CookieStorage.setItem('access_token', response.data.access_token, {
-            expires: 1,
-        });
-        CookieStorage.setItem('refresh_token', response.data.refresh_token, {
-            expires: 7,
-        });
 
         return response.data;
     },
@@ -73,10 +67,6 @@ const AuthApi = {
             console.error('Logout error:', error);
         } finally {
             CookieStorage.clearAuth();
-
-            if (typeof window !== 'undefined') {
-                window.location.href = '/login';
-            }
         }
     },
 
@@ -103,7 +93,6 @@ const AuthApi = {
 
         return response.data;
     },
-
 };
 
 export default AuthApi;

@@ -1,14 +1,19 @@
 export interface LoginPayload {
-    email: string;
+    emailOrUsername: string;
     password: string;
 }
 
 export interface LoginResponse {
-    access_token: string;
-    refresh_token: string;
+    token: string;
+    refreshToken: string;
     user: {
         id: string;
+        username: string;
         email: string;
-        name: string;
+        fullName: string | null;
+        phone: string | null;
+        money: number;
+        totalMoney: number;
+        role: number;
     };
 }

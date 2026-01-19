@@ -3,6 +3,7 @@ import { inter } from "@/font";
 import { Geist, Geist_Mono } from "next/font/google";
 import type { Metadata } from "next";
 import Providers from "@/provider";
+import { Toaster } from "react-hot-toast";
 
 export const runtime = 'edge';
 
@@ -33,6 +34,31 @@ export default function RootLayout({
       >
         <Providers>
           {children}
+
+          {/* <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 3000,
+              style: {
+                background: "#1f2937",
+                color: "#fff",
+              },
+              success: {
+                iconTheme: {
+                  primary: "#22c55e",
+                  secondary: "#fff",
+                },
+              },
+              error: {
+                iconTheme: {
+                  primary: "#ef4444",
+                  secondary: "#fff",
+                },
+              },
+            }}
+          /> */}
+          <Toaster
+          />
         </Providers>
       </body>
     </html>

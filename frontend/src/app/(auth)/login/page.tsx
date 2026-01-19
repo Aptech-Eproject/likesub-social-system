@@ -2,35 +2,11 @@
 
 import AuthFooterLinks from "@/components/client/landing-page/AuthFooterLinks";
 import BorderAnimatedContainer from "@/components/common/BorderAnimatedContainer";
-import { useLogin } from "@/hooks/common/useAuth";
 import LoginForm from "@/layouts/client/landing-page/LoginForm";
-import { LoginPayload } from "@/types/login.type";
-import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 export default function LoginPage() {
     const router = useRouter();
-
-    const [formData, setFormData] = useState<LoginPayload>({
-        email: "",
-        password: ""
-    });
-
-    const { mutate: login, isPending, isError, error } = useLogin();
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        login({
-            email: formData.email,
-            password: formData.password
-        });
-    }
-
-    const errorMessage = error instanceof AxiosError
-        ? error.response?.data?.message || 'Đăng nhập thất bại!'
-        : 'Có lỗi xảy ra';
 
     return (
         <BorderAnimatedContainer>
