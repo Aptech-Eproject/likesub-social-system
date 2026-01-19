@@ -1,11 +1,12 @@
 "use client"
 
 import { useState } from "react";
-
-import Dropdown from "@/components/common/ui/dropdown";
-import DropdownItem from "@/components/common/ui/dropdown-item";
+import { useLogout } from "@/hooks/common/useAuth";
 import Link from "next/link";
 import Image from "next/image";
+
+import DropdownItem from "@/components/common/ui/dropdown-item";
+import Dropdown from "@/components/common/ui/dropdown";
 
 function UserDropdown() {
     const [isOpen, setIsOpen] = useState(false);
@@ -17,6 +18,12 @@ function UserDropdown() {
 
     const closeDropdown = () => {
         setIsOpen(false);
+    }
+
+    const logoutMutation = useLogout();
+
+    const handleLogout = () => {
+        logoutMutation.mutate();
     }
 
     return (
@@ -144,9 +151,10 @@ function UserDropdown() {
                     </li>
                 </ul>
 
-                <Link
-                    href={"/"}
-                    className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-slate-700 rounded-lg group text-[14px] hover:bg-gray-100 hover:text-slate-700"
+                <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-slate-700 rounded-lg group text-[14px] hover:bg-gray-100 hover:text-slate-700 cursor-pointer"
+                    disabled={logoutMutation.isPending}
                 >
                     <svg
                         className="fill-gray-500 group-hover:fill-gray-700 dark:group-hover:fill-gray-300"
@@ -163,8 +171,12 @@ function UserDropdown() {
                             fill=""
                         />
                     </svg>
-                    Đăng xuất
-                </Link>
+                    {
+                        logoutMutation.isPending
+                            ? "Đang đăng xuất..."
+                            : "Đăng xuất"
+                    }
+                </button>
             </Dropdown>
         </div>
     )

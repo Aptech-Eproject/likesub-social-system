@@ -1,8 +1,6 @@
 "use client";
 
-import type React from "react";
 import * as z from "zod";
-import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 
@@ -21,36 +19,28 @@ import {
     FieldGroup,
     FieldLabel,
 } from "@/components/common/ui/field";
+
 import { Input } from "@/components/common/ui/input";
 import { registerSchema } from "@/schemas/auth/register.schema";
+import { useRegister } from "@/hooks/common/useAuth";
 
 export default function RegisterForm() {
+    const registerMutation = useRegister();
+
     const form = useForm<z.infer<typeof registerSchema>>({
         resolver: zodResolver(registerSchema),
         defaultValues: {
             username: "",
             email: "",
             password: "",
-            repassword: "",
+            confirmPassword: "",
         },
     });
 
     function onSubmit(data: z.infer<typeof registerSchema>) {
-        toast("You submitted the following values:", {
-            description: (
-                <pre className="bg-code text-code-foreground mt-2 w-[320px] overflow-x-auto rounded-md p-4">
-                    <code>{JSON.stringify(data, null, 2)}</code>
-                </pre>
-            ),
-            position: "bottom-right",
-            classNames: {
-                content: "flex flex-col gap-2",
-            },
-            style: {
-                "--border-radius": "calc(var(--radius)  + 4px)",
-            } as React.CSSProperties,
-        });
+        registerMutation.mutate(data);
     }
+
     return (
         <Card className="w-full sm:max-w-md shadow-xl border border-slate-700/40 bg-black-100 rounded-2xl p-2">
             <CardHeader className="mt-4">
@@ -155,7 +145,7 @@ export default function RegisterForm() {
                             )}
                         />
                         <Controller
-                            name="repassword"
+                            name="confirmPassword"
                             control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
@@ -192,8 +182,13 @@ export default function RegisterForm() {
                         type="submit"
                         form="form-rhf-demo"
                         className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
+                        disabled={registerMutation.isPending}
                     >
-                        Đăng ký
+                        {
+                            registerMutation.isPending
+                                ? "Đang đăng ký..."
+                                : "Đăng ký"
+                        }
                     </Button>
                     <Button
                         type="button"
