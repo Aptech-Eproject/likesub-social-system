@@ -3,6 +3,7 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/common/ui/button";
 import { Input } from "@/components/common/ui/input";
@@ -24,6 +25,7 @@ import {
 } from "@/components/common/ui/field";
 
 export default function LoginForm() {
+    const router = useRouter();
     const loginMutation = useLogin();
 
     const form = useForm<z.infer<typeof loginSchema>>({
@@ -32,7 +34,6 @@ export default function LoginForm() {
             emailOrUsername: "",
             password: "",
         },
-
     });
 
     function onSubmit(data: z.infer<typeof loginSchema>) {
@@ -109,6 +110,17 @@ export default function LoginForm() {
                             )}
                         />
                     </FieldGroup>
+
+                    {/* Forgot Password Link */}
+                    <div className="flex justify-end">
+                        <button
+                            type="button"
+                            onClick={() => router.push("/forgot-password")}
+                            className="text-sm text-blue-400 hover:text-blue-300 transition cursor-pointer"
+                        >
+                            Quên mật khẩu?
+                        </button>
+                    </div>
                 </form>
             </CardContent>
             <CardFooter className="mb-6">
