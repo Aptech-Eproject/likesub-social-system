@@ -165,9 +165,8 @@ export default function VerifyOTPPage() {
                                     type="button"
                                     onClick={handleSubmit}
                                     className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
-                                    disabled={isLoading}
                                 >
-                                    {isLoading ? "Đang xác thực..." : "Xác nhận"}
+                                    Xác nhận
                                 </Button>
                                 <Button
                                     type="button"

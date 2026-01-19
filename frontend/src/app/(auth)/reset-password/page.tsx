@@ -22,52 +22,39 @@ import {
     FieldLabel,
 } from "@/components/common/ui/field";
 import BorderAnimatedContainer from "@/components/common/BorderAnimatedContainer";
-
-const resetPasswordSchema = z.object({
-    password: z
-        .string()
-        .min(8, { message: "Mật khẩu phải có ít nhất 8 ký tự" })
-        .regex(/[A-Z]/, { message: "Mật khẩu phải chứa ít nhất 1 chữ in hoa" })
-        .regex(/[a-z]/, { message: "Mật khẩu phải chứa ít nhất 1 chữ thường" })
-        .regex(/[0-9]/, { message: "Mật khẩu phải chứa ít nhất 1 số" }),
-    confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-    message: "Mật khẩu xác nhận không khớp",
-    path: ["confirmPassword"],
-});
+import { resetPasswordSchema } from "@/schemas/auth/reset-password.schema";
+import { useResetPassword } from "@/hooks/common/useAuth";
 
 export default function ResetPasswordPage() {
     const router = useRouter();
+
     const searchParams = useSearchParams();
     const email = searchParams.get("email");
     const otp = searchParams.get("otp");
 
-    const [isLoading, setIsLoading] = useState(false);
+    const resetPasswordMutation = useResetPassword();
+
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const form = useForm<z.infer<typeof resetPasswordSchema>>({
         resolver: zodResolver(resetPasswordSchema),
         defaultValues: {
-            password: "",
+            newPassword: "",
             confirmPassword: "",
         },
     });
 
-    async function onSubmit(data: z.infer<typeof resetPasswordSchema>) {
-        setIsLoading(true);
-        try {
-            // API call để đặt lại mật khẩu
-            // await resetPassword(email, otp, data.password);
-
-            alert("Đặt lại mật khẩu thành công!");
-            router.push("/login");
-        } catch (error) {
-            console.error(error);
-            alert("Đặt lại mật khẩu thất bại. Vui lòng thử lại.");
-        } finally {
-            setIsLoading(false);
+    const onSubmit = async (data: z.infer<typeof resetPasswordSchema>) => {
+        if (!email || !otp) {
+            return;
         }
+        resetPasswordMutation.mutate({
+            email,
+            token: otp,
+            newPassword: data.newPassword,
+            confirmPassword: data.confirmPassword,
+        });
     }
 
     return (
@@ -90,7 +77,7 @@ export default function ResetPasswordPage() {
                                 className="space-y-6"
                             >
                                 <Controller
-                                    name="password"
+                                    name="newPassword"
                                     control={form.control}
                                     render={({ field, fieldState }) => (
                                         <Field data-invalid={fieldState.invalid}>
@@ -194,9 +181,9 @@ export default function ResetPasswordPage() {
                                     type="submit"
                                     form="reset-password-form"
                                     className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
-                                    disabled={isLoading}
+                                    disabled={resetPasswordMutation.isPending}
                                 >
-                                    {isLoading ? "Đang xử lý..." : "Đặt lại mật khẩu"}
+                                    {resetPasswordMutation.isPending ? "Đang xử lý..." : "Đặt lại mật khẩu"}
                                 </Button>
                                 <Button
                                     type="button"

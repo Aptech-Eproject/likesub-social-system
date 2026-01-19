@@ -4,7 +4,6 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 import { Button } from "@/components/common/ui/button";
 import { Input } from "@/components/common/ui/input";
@@ -21,15 +20,15 @@ import {
     FieldError,
     FieldLabel,
 } from "@/components/common/ui/field";
-import BorderAnimatedContainer from "@/components/common/BorderAnimatedContainer";
 
-const forgotPasswordSchema = z.object({
-    email: z.string().email({ message: "Email không hợp lệ" }),
-});
+import BorderAnimatedContainer from "@/components/common/BorderAnimatedContainer";
+import { forgotPasswordSchema } from "@/schemas/auth/forget-password.schema";
+import { useForgotPassword } from "@/hooks/common/useAuth";
+
 
 export default function ForgotPasswordPage() {
     const router = useRouter();
-    const [isLoading, setIsLoading] = useState(false);
+    const forgotPassowordMutation = useForgotPassword();
 
     const form = useForm<z.infer<typeof forgotPasswordSchema>>({
         resolver: zodResolver(forgotPasswordSchema),
@@ -38,19 +37,8 @@ export default function ForgotPasswordPage() {
         },
     });
 
-    async function onSubmit(data: z.infer<typeof forgotPasswordSchema>) {
-        setIsLoading(true);
-        try {
-            // API call để gửi OTP
-            // await sendOTP(data.email);
-
-            // Chuyển sang trang nhập OTP
-            router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsLoading(false);
-        }
+    const onSubmit = async (data: z.infer<typeof forgotPasswordSchema>) => {
+        forgotPassowordMutation.mutate(data);
     }
 
     return (
@@ -106,9 +94,13 @@ export default function ForgotPasswordPage() {
                                     type="submit"
                                     form="forgot-password-form"
                                     className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
-                                    disabled={isLoading}
+                                    disabled={forgotPassowordMutation.isPending}
                                 >
-                                    {isLoading ? "Đang gửi..." : "Gửi mã OTP"}
+                                    {
+                                        forgotPassowordMutation.isPending
+                                            ? "Đang gửi..."
+                                            : "Gửi mã OTP"
+                                    }
                                 </Button>
                                 <Button
                                     type="button"

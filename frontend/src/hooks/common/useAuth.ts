@@ -6,6 +6,7 @@ import CookieStorage from '@/lib/cookie-storage';
 import { LoginPayload } from '@/types/login.type';
 import { RegisterPayload } from '@/types/register.type';
 import toast from 'react-hot-toast';
+import { ForgotPasswordPayload, ResetPasswordPayload } from '@/types/forgot-password.type';
 
 export const useCurrentUser = () => {
     return useQuery({
@@ -81,6 +82,65 @@ export const useLogout = () => {
             console.error('Logout failed:', error);
             toast.error(
                 error?.response?.data?.message || "Đăng xuất thất bại"
+            );
+        },
+    });
+};
+
+// export const useVerifyEmail = () => {
+//     const router = useRouter();
+
+//     return useMutation({
+//         mutationFn: (payload: VerifyEmailPayload) => AuthApi.forgotPassword(payload),
+//         onSuccess: (data) => {
+//             console.log('Verify email response:', data.message);
+//             toast.success("Email đã được xác thực thành công! Mã OTP của bạn đã được gửi qua email.");
+//             router.push('/verify-otp');
+//         },
+//         onError: (error: any) => {
+//             console.error('Checked email error:', error);
+//             toast.error(
+//                 error?.response?.data?.message || "Xác thực email thất bại!"
+//             );
+//         },
+//     });
+// };
+
+export const useForgotPassword = () => {
+    const router = useRouter();
+
+    return useMutation({
+        mutationFn: (payload: ForgotPasswordPayload) => AuthApi.forgotPassword(payload),
+        onSuccess: (data, variables) => {
+            console.log('Forgot password response:', data.message);
+
+            toast.success("Mã OTP đã được gửi đến email của bạn!");
+            router.push(`/verify-otp?email=${encodeURIComponent(variables.email)}`);
+        },
+        onError: (error: any) => {
+            console.error('Forgot password error:', error);
+            toast.error(
+                error?.response?.data?.message || "Gửi mã OTP thất bại!"
+            );
+        },
+    });
+};
+
+export const useResetPassword = () => {
+    const router = useRouter();
+
+    return useMutation({
+        mutationFn: (payload: ResetPasswordPayload) => AuthApi.resetPassword(payload),
+        onSuccess: (data) => {
+            console.log('Reset password response:', data.message);
+
+            toast.success("Đặt lại mật khẩu thành công!");
+            router.push('/login');
+        },
+        onError: (error: any) => {
+            console.error('Reset password error:', error);
+            toast.error(
+                error?.response?.data?.message || "Đặt lại mật khẩu thất bại!"
             );
         },
     });
