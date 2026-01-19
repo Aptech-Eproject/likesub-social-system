@@ -5,6 +5,7 @@ import { privateApi, publicApi } from "@/lib/axios-instance";
 import { LoginPayload, LoginResponse } from "@/types/login.type";
 import { RegisterPayload, RegisterResponse } from "@/types/register.type";
 import { RefreshTokenResponse } from "@/types/refreshToken.type";
+import { ForgotPasswordPayload, ForgotPasswordResponse, ResetPasswordPayload, ResetPasswordResponse } from "@/types/forgot-password.type";
 
 const AuthApi = {
     login: async (payload: LoginPayload): Promise<LoginResponse> => {
@@ -70,25 +71,19 @@ const AuthApi = {
         }
     },
 
-    forgotPassword: async (email: string): Promise<{ message: string }> => {
-        const response = await publicApi.post<{ message: string }>(
+    forgotPassword: async (payload: ForgotPasswordPayload): Promise<ForgotPasswordResponse> => {
+        const response = await publicApi.post<ForgotPasswordResponse>(
             AUTH_ENDPOINTS.FORGOT_PASSWORD,
-            { email }
+            payload
         );
-
         return response.data;
     },
 
-    resetPassword: async (
-        token: string,
-        newPassword: string
-    ): Promise<{ message: string }> => {
-        const response = await publicApi.post<{ message: string }>(
+
+    resetPassword: async (payload: ResetPasswordPayload): Promise<ResetPasswordResponse> => {
+        const response = await publicApi.post<ResetPasswordResponse>(
             AUTH_ENDPOINTS.RESET_PASSWORD,
-            {
-                token,
-                new_password: newPassword,
-            }
+            payload
         );
 
         return response.data;
