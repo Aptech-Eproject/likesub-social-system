@@ -39,4 +39,5 @@ project.nuget.cache
 /package-lock.json
 
 # Ignore local global.json (only for feat/frontend-mth)
-backend/global.jsonx
+/backend/backend/global.json
+.fake

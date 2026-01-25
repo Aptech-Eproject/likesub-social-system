@@ -49,7 +49,6 @@ privateApi.interceptors.response.use(
                     _retry?: boolean;
                 })
                 | undefined = error.config;
-
             if (
                 error.response?.status === 401 &&
                 originalRequest &&

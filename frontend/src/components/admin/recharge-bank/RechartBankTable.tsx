@@ -1,146 +1,72 @@
+"use client";
+
 import Link from "next/link";
-import {
-    Edit2,
-    Trash2
-} from "lucide-react";
+import { Edit2, Trash2, Loader2 } from "lucide-react";
+import { useMyPayments } from "@/hooks/common/usePayment";
+import { Payment, PaymentStatus } from "@/types/payment.type";
 
+const formatCurrency = (amount: number): string => {
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
+    }).format(amount);
+};
 
-interface BankDeposit {
-    id: number;
-    username: string;
-    userId: number;
-    transactionCode: string;
-    status: 'pending' | 'expired';
-    depositAmount: string;
-    receivedAmount: string;
-    bankName: string;
-    createdAt: string;
-    updatedAt: string;
-}
+const getStatusClassName = (status: PaymentStatus): string => {
+    const statusMap = {
+        'Pending': 'bg-[#fbbf24] text-white w-26',
+        'Completed': 'bg-green-500 text-white w-20',
+        'Expired': 'bg-[#f05252] text-white w-14',
+        'Cancelled': 'bg-gray-500 text-white w-14',
+    };
+    return statusMap[status] || 'bg-gray-500 text-white w-14';
+};
+
+const getStatusText = (status: PaymentStatus): string => {
+    const statusTextMap = {
+        'Pending': 'Chưa thanh toán',
+        'Completed': 'Hoàn thành',
+        'Expired': 'Hết hạn',
+        'Cancelled': 'Đã hủy',
+    };
+    return statusTextMap[status] || status;
+};
 
 function RechartBankTable() {
-    const bankDeposits: BankDeposit[] = [
-        {
-            id: 1,
-            username: 'admin',
-            userId: 1,
-            transactionCode: '689714325',
-            status: 'pending',
-            depositAmount: '10.000đ',
-            receivedAmount: '10.000đ',
-            bankName: 'Vietcombank',
-            createdAt: '2026-01-07 17:04:33',
-            updatedAt: '2026-01-07 17:04:33'
-        },
-        {
-            id: 2,
-            username: 'admin',
-            userId: 1,
-            transactionCode: '974135826',
-            status: 'pending',
-            depositAmount: '100.000đ',
-            receivedAmount: '100.000đ',
-            bankName: 'Vietcombank',
-            createdAt: '2026-01-06 12:52:54',
-            updatedAt: '2026-01-06 12:52:54'
-        },
-        {
-            id: 3,
-            username: 'admin',
-            userId: 1,
-            transactionCode: '671892534',
-            status: 'pending',
-            depositAmount: '100.000đ',
-            receivedAmount: '100.000đ',
-            bankName: 'Vietcombank',
-            createdAt: '2026-01-05 10:52:48',
-            updatedAt: '2026-01-05 10:52:48'
-        },
-        {
-            id: 4,
-            username: 'hapr2o11243',
-            userId: 54,
-            transactionCode: '437592681',
-            status: 'expired',
-            depositAmount: '11.111.100đ',
-            receivedAmount: '11.111.100đ',
-            bankName: 'Vietcombank',
-            createdAt: '2025-12-31 00:01:51',
-            updatedAt: '2025-12-31 18:18:02'
-        },
-        {
-            id: 5,
-            username: 'hapr2o11243',
-            userId: 54,
-            transactionCode: '193475826',
-            status: 'expired',
-            depositAmount: '12.221đ',
-            receivedAmount: '12.221đ',
-            bankName: 'Vietcombank',
-            createdAt: '2025-12-31 00:01:38',
-            updatedAt: '2025-12-31 18:18:02'
-        },
-        {
-            id: 6,
-            username: 'tranthangbzx',
-            userId: 52,
-            transactionCode: '276583491',
-            status: 'expired',
-            depositAmount: '443.242đ',
-            receivedAmount: '443.242đ',
-            bankName: 'Vietcombank',
-            createdAt: '2025-12-29 16:59:56',
-            updatedAt: '2025-12-30 19:39:15'
-        },
-        {
-            id: 7,
-            username: 'admin',
-            userId: 1,
-            transactionCode: '459738126',
-            status: 'expired',
-            depositAmount: '50.000đ',
-            receivedAmount: '50.000đ',
-            bankName: 'Vietcombank',
-            createdAt: '2025-12-23 15:56:35',
-            updatedAt: '2025-12-25 21:54:09'
-        },
-        {
-            id: 8,
-            username: 'admin',
-            userId: 1,
-            transactionCode: '416579238',
-            status: 'expired',
-            depositAmount: '50.000đ',
-            receivedAmount: '50.000đ',
-            bankName: 'Vietcombank',
-            createdAt: '2025-12-23 15:56:19',
-            updatedAt: '2025-12-25 21:54:09'
-        },
-        {
-            id: 9,
-            username: 'admin',
-            userId: 1,
-            transactionCode: '938216475',
-            status: 'expired',
-            depositAmount: '5.000đ',
-            receivedAmount: '5.000đ',
-            bankName: 'Vietcombank',
-            createdAt: '2025-12-16 13:50:19',
-            updatedAt: '2025-12-25 21:54:09'
-        },
-        {
-            id: 10,
-            username: 'admin',
-            userId: 1,
-            transactionCode: '746123985',
-            status: 'expired',
-            depositAmount: '1.000đ',
-            receivedAmount: '1.000đ',
-            bankName: 'Vietcombank',
-            createdAt: '2025-12-10 01:24:41',
-            updatedAt: '2025-12-25 21:54:09'
-        }
-    ];
+    const { data: payments, isLoading, isError, error } = useMyPayments();
+
+    if (isLoading) {
+        return (
+            <div className="bg-white rounded-sm shadow-sm p-8 flex justify-center items-center">
+                <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+                <span className="ml-3 text-gray-600">Đang tải dữ liệu...</span>
+            </div>
+        );
+    }
+
+    if (isError) {
+        return (
+            <div className="bg-white rounded-sm shadow-sm p-8">
+                <div className="text-center text-red-600">
+                    <p className="font-semibold">Lỗi khi tải dữ liệu</p>
+                    <p className="text-sm mt-2">{error?.message || 'Vui lòng thử lại sau'}</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!payments || payments.length === 0) {
+        return (
+            <div className="bg-white rounded-sm shadow-sm p-8">
+                <div className="text-center text-gray-500">
+                    <p className="font-semibold">
+                        Chưa có giao dịch nào
+                    </p>
+                    <p className="text-sm mt-2">Danh sách giao dịch sẽ hiển thị tại đây</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-white rounded-sm shadow-sm overflow-hidden">
@@ -152,9 +78,6 @@ function RechartBankTable() {
                             <tr>
                                 <th className="px-8 py-3 text-left text-[13px] font-bold text-black">
                                     Thao tác
-                                </th>
-                                <th className="px-4 py-3 text-left text-[13px] font-bold text-black">
-                                    Username
                                 </th>
                                 <th className="px-4 py-3 text-left text-[13px] font-bold text-black">
                                     Mã giao dịch
@@ -179,17 +102,17 @@ function RechartBankTable() {
 
                         {/* Body */}
                         <tbody>
-                            {bankDeposits.map((deposit, index) => (
+                            {payments.map((payment: Payment, index: number) => (
                                 <tr
-                                    key={deposit.id}
+                                    key={payment.id}
                                     className={`hover:bg-gray-50 transition-colors ${index % 2 === 1 ? 'bg-gray-100' : 'bg-white'
                                         }`}
                                 >
                                     <td className="px-6 py-3">
                                         <div className="flex items-center justify-center gap-2">
                                             <Link
-                                                href={`/admin/recharge/bank/${deposit.id}`}
-                                                className="p-2 bg-[#49b6f5]! hover:bg-[#3aa5e3] text-white! rounded transition-colors cursor-pointer"
+                                                href={`/admin/recharge/bank/${payment.id}`}
+                                                className="p-2 bg-[#49b6f5] hover:bg-[#3aa5e3] text-white rounded transition-colors cursor-pointer"
                                                 title="Sửa"
                                             >
                                                 <Edit2 className="w-4 h-4" />
@@ -203,59 +126,45 @@ function RechartBankTable() {
                                         </div>
                                     </td>
                                     <td className="px-4 py-3">
-                                        <Link
-                                            href={`/admin/users/${deposit.userId}/info`}
-                                            className="text-[13px] font-bold text-[#846adf] cursor-pointer hover:underline"
-                                        >
-                                            {deposit.username} [ID {deposit.userId}]
-                                        </Link>
-                                    </td>
-                                    <td className="px-4 py-3">
                                         <span className="text-[13px] font-bold text-[#846adf]">
-                                            #{deposit.transactionCode}
+                                            #{payment.txnCode}
                                         </span>
                                     </td>
                                     <td className="px-4 py-3">
                                         <span
-                                            className={`py-1 px-2 text-[10px] flex items-center justify-center mx-auto font-bold rounded text-center ${deposit.status === 'pending'
-                                                ? 'bg-[#fbbf24] text-white w-26'
-                                                : 'bg-[#f05252] text-white w-14'
-                                                }`}
+                                            className={`py-1 px-2 text-[10px] flex items-center justify-center mx-auto font-bold rounded text-center ${getStatusClassName(payment.status)}`}
                                         >
-                                            {deposit.status === 'pending' ? 'Chưa thanh toán' : 'Hết hạn'}
+                                            {getStatusText(payment.status)}
                                         </span>
                                     </td>
                                     <td className="px-4 py-3">
                                         <span className="text-[13px] font-bold text-green-600">
-                                            {deposit.depositAmount}
+                                            {formatCurrency(payment.amountPaid)}
                                         </span>
                                     </td>
                                     <td className="px-4 py-3">
                                         <span className="text-[13px] font-bold text-red-600">
-                                            {deposit.receivedAmount}
+                                            {formatCurrency(payment.amountReceived)}
                                         </span>
                                     </td>
                                     <td className="px-4 py-3">
                                         <span className="text-[13px] font-bold text-gray-800">
-                                            {deposit.bankName}
+                                            {payment.bankName}
                                         </span>
                                     </td>
                                     <td className="px-4 py-3">
                                         <span className="text-[13px] font-medium text-gray-800">
-                                            {deposit.createdAt}
+                                            {new Date(payment.createdAt).toLocaleString('vi-VN')}
                                         </span>
                                     </td>
                                 </tr>
                             ))}
-                            <tr>
-
-                            </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default RechartBankTable
+export default RechartBankTable;
