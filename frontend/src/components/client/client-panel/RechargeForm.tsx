@@ -179,7 +179,9 @@ export default function RechargeForm() {
                             className="inline-flex w-full items-center justify-center gap-2 rounded-sm bg-neutral-900 px-4 py-3 text-sm font-semibold text-white cursor-pointer hover:-translate-y-1 hover:shadow-md hover:shadow-blue-300 transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                         >
                             <span>🧾</span>
-                            <span>{isSubmitting ? "Đang tạo..." : "TẠO HÓA ĐƠN"}</span>
+                            <span>
+                                {isSubmitting ? "Đang tạo..." : "TẠO HÓA ĐƠN"}
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -187,3 +189,202 @@ export default function RechargeForm() {
         </div>
     );
 }
+
+// "use client";
+
+// import * as z from "zod";
+
+// import { zodResolver } from "@hookform/resolvers/zod";
+// import { Controller, useForm } from "react-hook-form";
+// import { Button } from "@/components/common/ui/button";
+// import { Input } from "@/components/common/ui/input";
+// import {
+//     Card,
+//     CardContent,
+//     CardDescription,
+//     CardFooter,
+//     CardHeader,
+//     CardTitle,
+// } from "@/components/common/ui/card";
+// import {
+//     Field,
+//     FieldError,
+//     FieldLabel,
+// } from "@/components/common/ui/field";
+// import { useCreatePayment } from "@/hooks/common/usePayment";
+
+// const createPaymentSchema = z.object({
+//     txnCode: z.string().min(1, { message: "Mã giao dịch không được để trống" }),
+//     bankName: z.string().min(1, { message: "Tên ngân hàng không được để trống" }),
+//     amountPaid: z
+//         .string()
+//         .min(1, { message: "Số tiền không được để trống" })
+//         .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+//             message: "Số tiền phải lớn hơn 0",
+//         }),
+//     amountReceived: z
+//         .string()
+//         .min(1, { message: "Số tiền thực nhận không được để trống" })
+//         .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+//             message: "Số tiền thực nhận phải lớn hơn 0",
+//         }),
+// });
+
+// export default function CreatePaymentForm() {
+//     const createPaymentMutation = useCreatePayment();
+
+//     const form = useForm<z.infer<typeof createPaymentSchema>>({
+//         resolver: zodResolver(createPaymentSchema),
+//         defaultValues: {
+//             txnCode: "",
+//             bankName: "",
+//             amountPaid: "",
+//             amountReceived: "",
+//         },
+//     });
+
+//     const onSubmit = async (data: z.infer<typeof createPaymentSchema>) => {
+//         createPaymentMutation.mutate({
+//             txnCode: data.txnCode,
+//             bankName: data.bankName,
+//             amountPaid: Number(data.amountPaid),
+//             amountReceived: Number(data.amountReceived),
+//         });
+//     };
+
+//     return (
+//         <Card className="w-full max-w-2xl shadow-xl border border-slate-700/70 bg-white rounded-2xl">
+//             <CardHeader>
+//                 <CardTitle className="text-2xl font-bold text-blue-600">
+//                     Tạo giao dịch nạp tiền
+//                 </CardTitle>
+//                 <CardDescription className="text-slate-600">
+//                     Vui lòng nhập thông tin giao dịch
+//                 </CardDescription>
+//             </CardHeader>
+//             <CardContent>
+//                 <form
+//                     id="create-payment-form"
+//                     onSubmit={form.handleSubmit(onSubmit)}
+//                     className="space-y-4"
+//                 >
+//                     {/* Mã giao dịch */}
+//                     <Controller
+//                         name="txnCode"
+//                         control={form.control}
+//                         render={({ field, fieldState }) => (
+//                             <Field data-invalid={fieldState.invalid}>
+//                                 <FieldLabel className="text-sm font-semibold text-slate-700">
+//                                     Mã giao dịch
+//                                 </FieldLabel>
+//                                 <Input
+//                                     {...field}
+//                                     placeholder="Nhập mã giao dịch"
+//                                     className="border-slate-300 focus:border-blue-500"
+//                                 />
+//                                 {fieldState.invalid && (
+//                                     <FieldError
+//                                         errors={[fieldState.error]}
+//                                         className="text-red-500 text-xs mt-1"
+//                                     />
+//                                 )}
+//                             </Field>
+//                         )}
+//                     />
+
+//                     {/* Tên ngân hàng */}
+//                     <Controller
+//                         name="bankName"
+//                         control={form.control}
+//                         render={({ field, fieldState }) => (
+//                             <Field data-invalid={fieldState.invalid}>
+//                                 <FieldLabel className="text-sm font-semibold text-slate-700">
+//                                     Ngân hàng
+//                                 </FieldLabel>
+//                                 <Input
+//                                     {...field}
+//                                     placeholder="Nhập tên ngân hàng (VD: Vietcombank)"
+//                                     className="border-slate-300 focus:border-blue-500"
+//                                 />
+//                                 {fieldState.invalid && (
+//                                     <FieldError
+//                                         errors={[fieldState.error]}
+//                                         className="text-red-500 text-xs mt-1"
+//                                     />
+//                                 )}
+//                             </Field>
+//                         )}
+//                     />
+
+//                     {/* Số tiền nạp */}
+//                     <Controller
+//                         name="amountPaid"
+//                         control={form.control}
+//                         render={({ field, fieldState }) => (
+//                             <Field data-invalid={fieldState.invalid}>
+//                                 <FieldLabel className="text-sm font-semibold text-slate-700">
+//                                     Số tiền nạp (VNĐ)
+//                                 </FieldLabel>
+//                                 <Input
+//                                     {...field}
+//                                     type="number"
+//                                     placeholder="Nhập số tiền nạp"
+//                                     className="border-slate-300 focus:border-blue-500"
+//                                 />
+//                                 {fieldState.invalid && (
+//                                     <FieldError
+//                                         errors={[fieldState.error]}
+//                                         className="text-red-500 text-xs mt-1"
+//                                     />
+//                                 )}
+//                             </Field>
+//                         )}
+//                     />
+
+//                     {/* Số tiền thực nhận */}
+//                     <Controller
+//                         name="amountReceived"
+//                         control={form.control}
+//                         render={({ field, fieldState }) => (
+//                             <Field data-invalid={fieldState.invalid}>
+//                                 <FieldLabel className="text-sm font-semibold text-slate-700">
+//                                     Số tiền thực nhận (VNĐ)
+//                                 </FieldLabel>
+//                                 <Input
+//                                     {...field}
+//                                     type="number"
+//                                     placeholder="Nhập số tiền thực nhận"
+//                                     className="border-slate-300 focus:border-blue-500"
+//                                 />
+//                                 {fieldState.invalid && (
+//                                     <FieldError
+//                                         errors={[fieldState.error]}
+//                                         className="text-red-500 text-xs mt-1"
+//                                     />
+//                                 )}
+//                             </Field>
+//                         )}
+//                     />
+//                 </form>
+//             </CardContent>
+//             <CardFooter className="flex gap-4">
+//                 <Button
+//                     type="submit"
+//                     form="create-payment-form"
+//                     className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2"
+//                     disabled={createPaymentMutation.isPending}
+//                 >
+//                     {createPaymentMutation.isPending ? "Đang tạo..." : "Tạo giao dịch"}
+//                 </Button>
+//                 <Button
+//                     type="button"
+//                     variant="outline"
+//                     onClick={() => form.reset()}
+//                     className="border-slate-300 text-slate-700 hover:bg-slate-100 px-6 py-2"
+//                 >
+//                     Reset
+//                 </Button>
+//             </CardFooter>
+//         </Card>
+//     );
+// }
