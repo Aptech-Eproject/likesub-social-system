@@ -9,7 +9,6 @@ export const confirmAction = (
   cancelButtonText: "Hủy bỏ",
   reverseButtons: true,
 
-  // custom styling
   customClass: {
     popup: 'custom-swal-popup',
     title: 'custom-swal-title',
@@ -19,7 +18,6 @@ export const confirmAction = (
     icon: 'custom-swal-icon'
   },
 
-  // button styling
   buttonsStyling: false,
 
   // animation
