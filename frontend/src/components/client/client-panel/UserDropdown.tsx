@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react";
-import { useLogout } from "@/hooks/common/useAuth";
+import { useLogout } from "@/hooks/api/useAuth";
 import Link from "next/link";
 import Image from "next/image";
 

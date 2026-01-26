@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Edit2, Trash2, Loader2 } from "lucide-react";
-import { useMyPayments } from "@/hooks/common/usePayment";
+import { useMyPayments } from "@/hooks/api/usePayment";
 import { Payment, PaymentStatus } from "@/types/payment.type";
 
 const formatCurrency = (amount: number): string => {

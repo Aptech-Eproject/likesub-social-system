@@ -5,8 +5,8 @@ import axios, {
 } from 'axios';
 
 import CookieStorage from '../cookie-storage';
-import AuthApi from '@/api-requests/auth.requests';
-import { API_OPTIONS } from '@/constants/api/options';
+import AuthApi from '@/api/auth.api';
+import { API_OPTIONS } from '@/constants/api/options.constant';
 import { tokenRefreshQueue } from './token-refresh.queue';
 
 export const publicApi = axios.create(API_OPTIONS);

@@ -19,7 +19,7 @@ import {
     MessageSquareText,
     ShieldCheck
 } from "lucide-react";
-import { useSidebar } from "@/contexts/common/SidebarContext";
+import { useSidebar } from "@/contexts/SidebarContext";
 import Image from "next/image";
 
 interface NavItemType {

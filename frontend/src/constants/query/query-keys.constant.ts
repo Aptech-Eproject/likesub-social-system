@@ -1,12 +1,9 @@
 export const QUERY_KEYS = {
-    // ==================== AUTH ====================
     AUTH: {
         ME: ['auth', 'me'] as const,
         USER: (userId: string) => ['auth', 'user', userId] as const,
     },
 
-
-    // ==================== USERS ====================
     USERS: {
         ALL: ['users'] as const,
         LIST: (params?: Record<string, any>) => ['users', 'list', params] as const,

@@ -1,11 +1,12 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import AuthApi from '@/api-requests/auth.requests';
-import { QUERY_KEYS } from '@/constants/query-keys';
-import { useRouter } from 'next/navigation';
+import AuthApi from '@/api/auth.api';
 import CookieStorage from '@/lib/cookie-storage';
+import toast from 'react-hot-toast';
+
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/constants/query/query-keys.constant';
+import { useRouter } from 'next/navigation';
 import { LoginPayload } from '@/types/login.type';
 import { RegisterPayload } from '@/types/register.type';
-import toast from 'react-hot-toast';
 import { ForgotPasswordPayload, ResetPasswordPayload } from '@/types/forgot-password.type';
 
 export const useCurrentUser = () => {
@@ -32,7 +33,7 @@ export const useLogin = () => {
     return useMutation({
         mutationFn: (payload: LoginPayload) => AuthApi.login(payload),
         onSuccess: (data) => {
-            queryClient.setQueryData(
+            queryClient.setQueryData( // lưu thông tin user dô cache với KEY
                 QUERY_KEYS.AUTH.ME,
                 data.user
             );
@@ -75,7 +76,10 @@ export const useLogout = () => {
     return useMutation({
         mutationFn: () => AuthApi.logout(),
         onSuccess: () => {
-            queryClient.clear();
+            queryClient.removeQueries({ // clean cache của user
+                queryKey: QUERY_KEYS.AUTH.ME,
+            });
+
             router.push('/login');
         },
         onError: (error: any) => {
@@ -86,25 +90,6 @@ export const useLogout = () => {
         },
     });
 };
-
-// export const useVerifyEmail = () => {
-//     const router = useRouter();
-
-//     return useMutation({
-//         mutationFn: (payload: VerifyEmailPayload) => AuthApi.forgotPassword(payload),
-//         onSuccess: (data) => {
-//             console.log('Verify email response:', data.message);
-//             toast.success("Email đã được xác thực thành công! Mã OTP của bạn đã được gửi qua email.");
-//             router.push('/verify-otp');
-//         },
-//         onError: (error: any) => {
-//             console.error('Checked email error:', error);
-//             toast.error(
-//                 error?.response?.data?.message || "Xác thực email thất bại!"
-//             );
-//         },
-//     });
-// };
 
 export const useForgotPassword = () => {
     const router = useRouter();

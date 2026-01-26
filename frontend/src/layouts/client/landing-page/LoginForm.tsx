@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/common/ui/button";
 import { Input } from "@/components/common/ui/input";
 import { loginSchema } from "@/schemas/auth/login.schema";
-import { useLogin } from "@/hooks/common/useAuth";
+import { useLogin } from "@/hooks/api/useAuth";
 import {
     Card,
     CardContent,
@@ -30,7 +30,7 @@ export default function LoginForm() {
     const loginMutation = useLogin();
 
     const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    // const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
