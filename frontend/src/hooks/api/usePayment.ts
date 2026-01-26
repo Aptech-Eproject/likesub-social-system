@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import PaymentApi from '@/api-requests/payment.requests';
+import PaymentApi from '@/api/payment.api';
 import { CreatePaymentPayload } from '@/types/payment.type';
 import toast from 'react-hot-toast';
 

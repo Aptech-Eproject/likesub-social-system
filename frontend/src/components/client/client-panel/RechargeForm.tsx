@@ -211,8 +211,9 @@ export default function RechargeForm() {
 //     FieldError,
 //     FieldLabel,
 // } from "@/components/common/ui/field";
-// import { useCreatePayment } from "@/hooks/common/usePayment";
+// import { useCreatePayment } from "@/hooks/api/usePayment";
 
+// // tách ra file .schema.ts
 // const createPaymentSchema = z.object({
 //     txnCode: z.string().min(1, { message: "Mã giao dịch không được để trống" }),
 //     bankName: z.string().min(1, { message: "Tên ngân hàng không được để trống" }),

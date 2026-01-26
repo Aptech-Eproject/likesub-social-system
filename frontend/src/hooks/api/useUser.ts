@@ -1,5 +1,5 @@
-import UserApi from '@/api-requests/user.requests';
-import { QUERY_KEYS } from '@/constants/query-keys';
+import UserApi from '@/api/user.api';
+import { QUERY_KEYS } from '@/constants/query/query-keys.constant';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const useUsers = () => {

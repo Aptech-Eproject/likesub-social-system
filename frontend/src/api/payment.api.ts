@@ -1,5 +1,5 @@
-import { privateApi } from "@/lib/axios-instance";
-import { PAYMENT_ENDPOINTS } from "@/constants/api/payment.endpoints";
+import { privateApi } from "@/lib/axios/axios-instance";
+import { PAYMENT_ENDPOINTS } from "@/constants/api/payment.endpoints.constant";
 import { CreatePaymentPayload, CreatePaymentResponse, GetPaymentByIdResponse, GetPaymentsResponse } from "@/types/payment.type";
 
 const PaymentApi = {

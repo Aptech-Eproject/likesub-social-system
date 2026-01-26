@@ -23,7 +23,7 @@ import {
 
 import BorderAnimatedContainer from "@/components/common/BorderAnimatedContainer";
 import { forgotPasswordSchema } from "@/schemas/auth/forget-password.schema";
-import { useForgotPassword } from "@/hooks/common/useAuth";
+import { useForgotPassword } from "@/hooks/api/useAuth";
 
 
 export default function ForgotPasswordPage() {

@@ -2,7 +2,7 @@
 
 import { ReactNode } from 'react';
 import QueryProvider from './QueryProvider';
-import { SidebarProvider } from '@/contexts/common/SidebarContext';
+import { SidebarProvider } from '@/contexts/SidebarContext';
 
 interface ProvidersProps {
     children: ReactNode;

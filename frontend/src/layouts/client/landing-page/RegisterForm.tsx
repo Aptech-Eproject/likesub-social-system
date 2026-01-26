@@ -22,7 +22,7 @@ import {
 
 import { Input } from "@/components/common/ui/input";
 import { registerSchema } from "@/schemas/auth/register.schema";
-import { useRegister } from "@/hooks/common/useAuth";
+import { useRegister } from "@/hooks/api/useAuth";
 
 export default function RegisterForm() {
     const registerMutation = useRegister();

@@ -1,11 +1,17 @@
 import CookieStorage from "@/lib/cookie-storage";
 
-import { AUTH_ENDPOINTS } from "@/constants/api/auth.endpoints";
-import { privateApi, publicApi } from "@/lib/axios-instance";
+import { AUTH_ENDPOINTS } from "@/constants/api/auth.endpoints.constant";
+import { privateApi, publicApi } from "@/lib/axios/axios-instance";
 import { LoginPayload, LoginResponse } from "@/types/login.type";
 import { RegisterPayload, RegisterResponse } from "@/types/register.type";
 import { RefreshTokenResponse } from "@/types/refreshToken.type";
-import { ForgotPasswordPayload, ForgotPasswordResponse, ResetPasswordPayload, ResetPasswordResponse } from "@/types/forgot-password.type";
+
+import {
+    ForgotPasswordPayload,
+    ForgotPasswordResponse,
+    ResetPasswordPayload,
+    ResetPasswordResponse
+} from "@/types/forgot-password.type";
 
 const AuthApi = {
     login: async (payload: LoginPayload): Promise<LoginResponse> => {

@@ -23,7 +23,7 @@ import {
 } from "@/components/common/ui/field";
 import BorderAnimatedContainer from "@/components/common/BorderAnimatedContainer";
 import { resetPasswordSchema } from "@/schemas/auth/reset-password.schema";
-import { useResetPassword } from "@/hooks/common/useAuth";
+import { useResetPassword } from "@/hooks/api/useAuth";
 
 export default function ResetPasswordPage() {
     const router = useRouter();

@@ -1,5 +1,6 @@
-import { USER_ENDPOINTS } from "@/constants/api/user.endpoints";
-import { privateApi } from "@/lib/axios-instance";
+import { USER_ENDPOINTS } from "@/constants/api/user.endpoints.constant";
+import { privateApi } from "@/lib/axios/axios-instance";
+
 export interface User {
     id: string;
     name: string;
